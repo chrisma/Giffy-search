@@ -7,7 +7,7 @@ app = Flask(__name__)
 # the App Engine WSGI application server.
 
 from werkzeug import DebuggedApplication
-app.debug = True
+app.debug = False
 app.wsgi_app = DebuggedApplication(app.wsgi_app, evalex=True)
 
 import urllib
