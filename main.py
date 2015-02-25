@@ -12,9 +12,7 @@ app.wsgi_app = DebuggedApplication(app.wsgi_app, evalex=True)
 
 import urllib
 import urllib2
-import json
 import io
-import numpy
 import random
 from google_gif_search import gif_search
 
