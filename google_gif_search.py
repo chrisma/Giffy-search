@@ -4,10 +4,12 @@ import random
 import urllib
 import urllib2
 
-def gif_search(query):
+def gif_search(query, dominant_color=None):
 	"""
 	Return a list of URLs of animated gifs corresponding to the query.
 
+	dominant_color must be one of ['orange','red','yellow','green','teal','blue',
+	'purple','pink','white','gray','black','brown'].
 	The URLs are sorted the way that google ranked them (first one most relevant).
 	The URLs are not guaranteed to be valid (i.e. return HTTP 200).
 
@@ -19,10 +21,18 @@ def gif_search(query):
 	gets around rate limits.
 	"""
 
+	allowed_colors = ['orange','red','yellow','green','teal','blue',
+					'purple','pink','white','gray','black','brown']
+	if dominant_color not in allowed_colors:
+		dominant_color = None
+
 	base_url = 'https://www.google.com/search?'
+	tbs = 'itp:animated,ift:gif'
+	if dominant_color:
+		tbs = tbs + ',ic:specific,isc:' + dominant_color
 	search_url = base_url + urllib.urlencode({
 			'q': query,
-			'tbs':'itp:animated,ift:gif', #only animated gifs
+			'tbs': tbs, #only animated gifs
 			'tbm':'isch', #image search
 			'fp': '%016x' % random.randrange(16**16),
 			'tch':1,

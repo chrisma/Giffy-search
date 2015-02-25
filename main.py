@@ -16,13 +16,15 @@ import io
 import random
 from google_gif_search import gif_search
 
-@app.route('/<path:query>')
+@app.route('/<path:query>/<dominant_color>/<int:index>')
+@app.route('/<path:query>/<dominant_color>')
 @app.route('/<path:query>/<int:index>')
-def handle_query(query, index=0):
+@app.route('/<path:query>')
+def handle_query(query, dominant_color=None, index=0):
 
 	query = query.replace('_', '')
 
-	gif_urls = gif_search(query)
+	gif_urls = gif_search(query, dominant_color=dominant_color)
 	index = index if index<len(gif_urls) else len(gif_urls)-1
 
 	user_agent = 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:13.0) Gecko/20100101 Firefox/13.0.1'
@@ -33,16 +35,16 @@ def handle_query(query, index=0):
 			req = urllib2.Request(url, headers=headers)
 			image_data = urllib2.urlopen(req).read()
 			if '<html' in image_data:
-				print "WARNING Got HTML", url
+				app.logger.warning('Got HTML' + url)
 			else:
 				return send_file(io.BytesIO(image_data),
 						attachment_filename=query+'.gif',
 						mimetype='image/gif')
 		except urllib2.URLError, e:
-			print "ERROR", e, url
+			app.logger.warning('Google response', e, url)
 		else:
 			continue
 	else:
-		print "ERROR All URLs failed", query, index
+		app.logger.error('All URLs failed', query, index)
 		abort(404)
 
