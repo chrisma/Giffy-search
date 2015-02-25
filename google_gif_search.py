@@ -22,7 +22,7 @@ def gif_search(query):
 	base_url = 'https://www.google.com/search?'
 	search_url = base_url + urllib.urlencode({
 			'q': query,
-			'tbs':'itp:animated', #only animated images
+			'tbs':'itp:animated,ift:gif', #only animated gifs
 			'tbm':'isch', #image search
 			'fp': '%016x' % random.randrange(16**16),
 			'tch':1,
