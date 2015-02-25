@@ -17,16 +17,18 @@ import random
 from google_gif_search import gif_search
 
 @app.route('/<path:query>')
-def handle_query(query):
+@app.route('/<path:query>/<int:index>')
+def handle_query(query, index=0):
 
 	query = query.replace('_', '')
 
 	gif_urls = gif_search(query)
+	index = index if index<len(gif_urls) else len(gif_urls)-1
 
 	user_agent = 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:13.0) Gecko/20100101 Firefox/13.0.1'
 	headers = {'Referer':'https://www.google.com/', 'User-Agent': user_agent}
 
-	for url in gif_urls:
+	for url in gif_urls[index:]:
 		try:
 			req = urllib2.Request(url, headers=headers)
 			image_data = urllib2.urlopen(req).read()
@@ -41,6 +43,6 @@ def handle_query(query):
 		else:
 			continue
 	else:
-		print "ERROR All URLs failed"
-		abort(500)
+		print "ERROR All URLs failed", query, index
+		abort(404)
 
